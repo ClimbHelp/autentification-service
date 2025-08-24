@@ -120,8 +120,11 @@ passport.deserializeUser((user, done) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Route d'authentification Google
+app.get('/auth', passport.authenticate('openidconnect'));
+
 // Callback Google OAuth
-app.get('/', 
+app.get('/auth/callback', 
   passport.authenticate('openidconnect', { failureRedirect: '/login' }),
   async (req, res) => {
     try {
@@ -147,5 +150,20 @@ app.get('/',
     }
   }
 );
+
+// Route de test
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Service d\'authentification fonctionnel' });
+});
+
+// Route de santé
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', service: 'authentication' });
+});
+
+// Route par défaut
+app.get('/', (req, res) => {
+  res.json({ message: 'Service d\'authentification Climb Help' });
+});
 
 module.exports = app;
