@@ -9,7 +9,7 @@
     "dev": "nodemon src/index.ts",
     "start": "node api/index.js",
     "build": "tsc",
-    "build:vercel": "tsc && cp -r src/* dist/"
+    "vercel-build": "echo 'No build step needed for Vercel'"
   },
   "keywords": [],
   "author": "",

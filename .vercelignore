@@ -1,0 +1,35 @@
+# Fichiers de développement
+node_modules
+.env
+.env.local
+.env.example
+
+# Fichiers de test
+__tests__
+*.test.ts
+*.test.js
+jest.config.js
+coverage
+
+# Fichiers de build
+dist
+build
+*.tsbuildinfo
+
+# Fichiers de documentation
+README.md
+TESTING.md
+CI_CD_README.md
+
+# Fichiers de configuration de développement
+nodemon.json
+tsconfig.json
+tsconfig.prod.json
+
+# Fichiers Git
+.git
+.gitignore
+
+# Fichiers de logs
+logs
+*.log
