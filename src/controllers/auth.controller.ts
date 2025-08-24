@@ -1,8 +1,10 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, RequestHandler } from "express";
-import { GOOGLE_CLIENT_ID } from "../config/env";
+import { GOOGLE_CLIENT_ID, BDD_SERVICE_URL } from "../config/env";
 const fetch = require("node-fetch");
 
+const bddServiceUrl = BDD_SERVICE_URL || 'http://localhost:3003';
+const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 export const authCallback: RequestHandler = async (req: Request, res: Response) => {
   // Récupérer les infos du profil Google
@@ -19,7 +21,7 @@ export const authCallback: RequestHandler = async (req: Request, res: Response) 
       let premium: boolean = false;
 
       // D'abord, essayer de récupérer l'utilisateur existant
-      const searchResponse = await fetch(`http://localhost:3003/api/users/search?email=${encodeURIComponent(email)}`, {
+      const searchResponse = await fetch(`${bddServiceUrl}/api/users/search?email=${encodeURIComponent(email)}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" }
       });
@@ -35,7 +37,7 @@ export const authCallback: RequestHandler = async (req: Request, res: Response) 
           premium = userData.premium;
         } else {
           // L'utilisateur n'existe pas, le créer
-          const createResponse = await fetch("http://localhost:3003/api/users", {
+          const createResponse = await fetch(`${bddServiceUrl}/api/users`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password })
@@ -47,12 +49,12 @@ export const authCallback: RequestHandler = async (req: Request, res: Response) 
 
           const createData = await createResponse.json();
           userData = createData.data;
-          userId = userData.id;
+          userId = createData.data.id;
           console.log("Nouvel utilisateur créé:", userId);
         }
       } else {
         // Si la recherche échoue, essayer de créer l'utilisateur
-        const createResponse = await fetch("http://localhost:3003/api/users", {
+        const createResponse = await fetch(`${bddServiceUrl}/api/users`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, email, password })
@@ -64,7 +66,7 @@ export const authCallback: RequestHandler = async (req: Request, res: Response) 
 
         const createData = await createResponse.json();
         userData = createData.data;
-        userId = userData.id;
+        userId = createData.data.id;
         console.log("Nouvel utilisateur créé (recherche échouée):", userId);
       }
 
@@ -85,14 +87,14 @@ export const authCallback: RequestHandler = async (req: Request, res: Response) 
       );
 
       // Redirection vers le frontend avec le token
-      res.redirect(`http://localhost:3000/auth-callback?token=${token}`);
+      res.redirect(`${frontendUrl}/auth-callback?token=${token}`);
     } catch (err) {
       console.error("Erreur lors de l'authentification:", err);
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue';
-      res.redirect(`http://localhost:3000/auth-callback?error=Erreur lors de l'authentification: ${errorMessage}`);
+      res.redirect(`${frontendUrl}/auth-callback?error=Erreur lors de l'authentification: ${errorMessage}`);
     }
   } else {
-    res.redirect(`http://localhost:3000/auth-callback?error=Informations utilisateur manquantes`);
+    res.redirect(`${frontendUrl}/auth-callback?error=Informations utilisateur manquantes`);
   }
 }
 
