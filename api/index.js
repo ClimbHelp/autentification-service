@@ -37,20 +37,28 @@ const allowedOrigins = [
   'https://monitoring-service-climb-help.vercel.app',  // Monitoring production
 ];
 
+// Middleware CORS amélioré
 app.use((req, res, next) => {
   const origin = req.headers.origin;
+  
+  // Vérifier si l'origine est autorisée
   if (origin && allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
   }
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
   
+  // Headers CORS
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.header('Access-Control-Max-Age', '86400'); // 24 heures
+  
+  // Gestion des requêtes OPTIONS (preflight)
   if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
+    res.status(200).end();
+    return;
   }
+  
+  next();
 });
 
 // Pour obtenir la vraie IP derrière un proxy (x-forwarded-for)
