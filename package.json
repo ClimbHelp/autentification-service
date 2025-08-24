@@ -1,7 +1,7 @@
 {
   "name": "autentication-service",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
