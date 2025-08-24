@@ -1,0 +1,100 @@
+# Pipeline pour le service d'authentification
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_REGISTRY: "registry.gitlab.com"
+  DOCKER_IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+
+# Cache pour les dépendances
+cache:
+  paths:
+    - node_modules/
+    - .npm/
+
+# Tests
+test:
+  stage: test
+  image: node:18-alpine
+  variables:
+    NODE_ENV: test
+    GOOGLE_CLIENT_ID: "test-client-id"
+    GOOGLE_CLIENT_SECRET: "test-client-secret"
+    JWT_SECRET: "test-jwt-secret"
+  script:
+    - npm ci
+    - npm run test:coverage
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - coverage/
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Build de l'image Docker
+build:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    - main
+    - develop
+
+# Déploiement en staging
+deploy-staging:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl docker-cli
+  script:
+    - echo "Déploiement du service d'authentification en staging..."
+    - |
+      # Ici vous pouvez ajouter vos commandes de déploiement
+      echo "Service d'authentification déployé:"
+      echo "- Image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+      echo "- Port: 3003"
+      echo "- Environnement: staging"
+  environment:
+    name: staging
+    url: https://auth-staging.votre-app.com
+  only:
+    - develop
+
+# Déploiement en production
+deploy-production:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl docker-cli
+  script:
+    - echo "Déploiement du service d'authentification en production..."
+    - |
+      # Ici vous pouvez ajouter vos commandes de déploiement
+      echo "Service d'authentification déployé:"
+      echo "- Image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+      echo "- Port: 3003"
+      echo "- Environnement: production"
+  environment:
+    name: production
+    url: https://auth.votre-app.com
+  when: manual
+  only:
+    - main
