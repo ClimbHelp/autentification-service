@@ -67,12 +67,10 @@ app.use(passport.session());
 // Utilisation des routes
 app.use(routes);
 
-// Export de l'app pour Vercel
-export default app;
+// Export de l'app pour Render
+module.exports = app;
 
-// Démarrage du serveur seulement si on n'est pas sur Vercel
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  app.listen(PORT, () =>
-    console.log(`Server running on http://localhost:${PORT}`)
-  );
-}
+// Démarrage du serveur
+app.listen(PORT, () =>
+  console.log(`Server running on http://localhost:${PORT}`)
+);
