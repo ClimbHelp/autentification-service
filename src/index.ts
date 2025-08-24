@@ -68,7 +68,7 @@ app.use(passport.session());
 app.use(routes);
 
 // Export de l'app pour Vercel
-export default app;
+module.exports = app;
 
 // Démarrage du serveur seulement si on n'est pas sur Vercel
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
