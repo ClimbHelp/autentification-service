@@ -8,6 +8,18 @@
   ],
   "routes": [
     {
+      "src": "/auth",
+      "dest": "src/index.ts"
+    },
+    {
+      "src": "/auth/callback",
+      "dest": "src/index.ts"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "src/index.ts"
+    },
+    {
       "src": "/(.*)",
       "dest": "src/index.ts"
     }
