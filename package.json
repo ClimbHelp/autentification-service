@@ -7,14 +7,14 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "dev": "nodemon src/index.ts",
-    "start": "node dist/src/index.js",
+    "start": "node api/index.js",
     "build": "tsc",
     "vercel-build": "tsc"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
+  "type": "commonjs",
   "description": "",
   "dependencies": {
     "@prisma/client": "^6.4.1",
