@@ -75,7 +75,7 @@ passport.use(new OpenIDConnectStrategy({
   userInfoURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: process.env.GOOGLE_CALLBACK_URL || 'https://autentication-service-climb-help.vercel.app/auth/callback',
+  callbackURL: process.env.GOOGLE_CALLBACK_URL || 'https://autentification-service.onrender.com/auth/callback',
   scope: 'openid email profile'
 }, async (issuer, profile, done) => {
   try {
