@@ -164,6 +164,19 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'Service d\'authentification fonctionnel' });
 });
 
+// Route de debug OAuth
+app.get('/api/oauth-debug', (req, res) => {
+  res.json({
+    message: 'Configuration OAuth Debug',
+    clientId: process.env.GOOGLE_CLIENT_ID ? 'Configuré' : 'Manquant',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET ? 'Configuré' : 'Manquant',
+    callbackURL: process.env.GOOGLE_CALLBACK_URL || 'https://autentification-service.onrender.com/auth/callback',
+    frontendUrl: process.env.FRONTEND_URL || 'http://localhost:3000',
+    bddServiceUrl: process.env.BDD_SERVICE_URL || 'http://localhost:3003',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Route de santé
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', service: 'authentication' });
