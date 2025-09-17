@@ -23,7 +23,7 @@ export function configurePassport() {
         userInfoURL: "https://openidconnect.googleapis.com/v1/userinfo",
         clientID: GOOGLE_CLIENT_ID!,
         clientSecret: GOOGLE_CLIENT_SECRET!,
-        callbackURL: "http://localhost:3001/auth/callback",
+        callbackURL: process.env.GOOGLE_CALLBACK_URL || "https://autentification-service.onrender.com/auth/callback",
         scope: ["openid", "profile", "email"],
       } as OpenIDConnectStrategyOptions,
       (_issuer: string, profile: Profile, cb: VerifyCallback) => {
